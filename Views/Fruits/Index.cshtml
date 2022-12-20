@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<KBT.Models.Fruit>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+@if (SignInManager.IsSignedIn(User))
+{
+<p>
+    <a asp-action="Create"><button class="btn btn-success"><span class="fade fa-plus square"></span>Add new Fruit</button></a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.URL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+              Employee
+            </th>
+            <th>
+                Vendors
+            </th>
+            <th style="width:3%; text-align:center;"></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                    <img style="width:200px;" src="@item.URL" alt="@item.Title" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Employees.Name)
+            </td>
+              <td>
+                @foreach (var vendor in ViewData["Vendors"] as List<Vendor>)
+                {
+                    foreach (var vendorsofFruits in ViewData["VendorsofFruits"] as List<VendorsofFruits>)
+                    {
+                        if (vendor.Id == vendorsofFruits.VendorId && item.Id == vendorsofFruits.FruitId)
+                        {
+                                            <div id="VendorBox">
+                                                <span id="VendorName">@vendor.Name</span>
+                                                <img id="vendorImage" src="@vendor.Image" alt="@vendor.Name" />
+                                            </div>
+                        }
+                    }
+                }
+
+              </td>
+                  <td style="text-align:center;">
+                      @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+                    <a asp-action="Edit" asp-route-id="@item.Id"><span style="color: green;" class="fa fa-edit"></span></a>
+                    <!--<a asp-action="Details" asp-route-id="@item.Id"><span class="fa fa-info"></span></a> -->
+                    <a asp-action="Delete" asp-route-id="@item.Id"><span style="color:red;" class="fa fa-trash"></span></a>
+}
+                </td>
+        </tr>
+}
+    </tbody>
+</table>

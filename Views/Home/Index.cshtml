@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<KBT.Models.Fruit>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<h1 style="text-align:center;">Welcome </h1>
+<h1 style="text-align:center;"><span style="font-size:20px; font-style:italic;">Organic Fruit Shop</span></h1>
+<div class="text-center">
+  <div class="row">
+    @foreach (var item in Model)
+    {
+        <div id="Container" class="col-lg-3 col-md-4 col-sm-1">
+            <a asp-controller="Fruits" asp-action="FruitDetails" asp-route-id="@item.Id">
+            <img id="Image" style="width: 100%; height: 100%;" src="@item.URL" alt="@item.Title" />
+            <span id="Title">@item.Title</span>
+            </a>
+            <span id="Price">@item.Price</span>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <form asp-controller="Orders" asp-action="Create">
+            <span id="Quantity"><input id="quantityInput" type="number" name="Quantity" value="" placeholder="0" /></span>
+                        <input type="hidden" name="FruitId" value="@item.Id" />
+                        <input type="hidden" name="UserId" value="@UserManager.GetUserId(User)" />
+            <span id="CartButton"><button id="btn"><span class="fa fa-shopping-cart"></span>Add to Cart</button></span>
+                    </form>
+                }
+        </div>
+    }
+  </div>
+</div>
